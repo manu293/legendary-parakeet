@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-function LinkList(props) {
+function LinkList() {
   return <div>LinkList</div>;
 }
 
-export default LinkList;
+export { LinkList };
