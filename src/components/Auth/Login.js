@@ -5,12 +5,13 @@ import React, { useState } from 'react';
 // local imports
 import useFormValidation from './useFormValidation';
 import validateLogin from './validateLogin';
+import firebase from '../../firebase';
 
 // setting an initial state
 const INITIAL_STATE = {
   name: '',
-  email: '',
-  password: '',
+  email: 'johndoe@gmail.com',
+  password: 'johndoe123',
 };
 
 function Login() {
@@ -21,8 +22,17 @@ function Login() {
     handleBlur,
     errors,
     isSutbmitting,
-  } = useFormValidation(INITIAL_STATE, validateLogin);
+  } = useFormValidation(INITIAL_STATE, validateLogin, authenticateUser);
   const [login, setLogin] = useState(true);
+
+  async function authenticateUser() {
+    const { email, password, name } = values;
+
+    const response = login
+      ? await firebase.login(email, password)
+      : await firebase.register(name, email, password);
+    console.log('The reponse is : ', response);
+  }
   return (
     <div>
       <h2 className="mv3">{login ? 'LogIn' : 'Create Account'}</h2>
