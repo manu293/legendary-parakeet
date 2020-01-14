@@ -1,6 +1,9 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-use-before-define */
 /* eslint-disable import/prefer-default-export */
 // imports
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // local imports
 import useFormValidation from './useFormValidation';
@@ -14,7 +17,7 @@ const INITIAL_STATE = {
   password: 'johndoe123',
 };
 
-function Login() {
+function Login(props) {
   const {
     handleChange,
     handleSubmit,
@@ -24,14 +27,18 @@ function Login() {
     isSutbmitting,
   } = useFormValidation(INITIAL_STATE, validateLogin, authenticateUser);
   const [login, setLogin] = useState(true);
+  const [firebaseErr, setfirebaseErr] = useState(null);
 
   async function authenticateUser() {
     const { email, password, name } = values;
-
-    const response = login
-      ? await firebase.login(email, password)
-      : await firebase.register(name, email, password);
-    console.log('The reponse is : ', response);
+    try {
+      const response = login
+        ? await firebase.login(email, password)
+        : await firebase.register(name, email, password);
+      props.history.push('/');
+    } catch (err) {
+      setfirebaseErr(err.message);
+    }
   }
   return (
     <div>
@@ -68,6 +75,7 @@ function Login() {
           onChange={handleChange}
         />
         {errors.password && <p className="error-text">{errors.password}</p>}
+        {firebaseErr && <p className="error-text">{firebaseErr}</p>}
         <div className="flex mt3">
           <button
             type="submit"
@@ -87,6 +95,9 @@ function Login() {
           </button>
         </div>
       </form>
+      <div className="forgot-password">
+        <Link to="/forgot">Forgot Password ?</Link>
+      </div>
     </div>
   );
 }

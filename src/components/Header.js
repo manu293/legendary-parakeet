@@ -1,10 +1,14 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 // imports
-import React from 'react';
+import React, { useContext } from 'react';
 import { withRouter, NavLink } from 'react-router-dom';
 
 // local imports
+import { FirebaseContext } from '../firebase';
 
 function Header() {
+  const { user, firebase } = useContext(FirebaseContext);
   return (
     <div className="header">
       <div className="flex">
@@ -23,15 +27,31 @@ function Header() {
         <NavLink to="/search" className="header-link">
           Search
         </NavLink>
-        <div className="divider"> | </div>
-        <NavLink to="/create" className="header-link">
-          Submit
-        </NavLink>
+        {user && (
+          <>
+            {' '}
+            <div className="divider"> | </div>
+            <NavLink to="/create" className="header-link">
+              Submit
+            </NavLink>{' '}
+          </>
+        )}
       </div>
       <div className="flex">
-        <NavLink to="/login" className="header-link">
-          Login
-        </NavLink>
+        {user ? (
+          <>
+            <div className="header-name">{user.displayName}</div>
+            <div className="divider"> | </div>
+            <div className="header-button" onClick={() => firebase.logout()}>
+              {' '}
+              logout{' '}
+            </div>
+          </>
+        ) : (
+          <NavLink to="/login" className="header-link">
+            Login
+          </NavLink>
+        )}
       </div>
     </div>
   );
