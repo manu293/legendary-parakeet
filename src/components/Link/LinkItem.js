@@ -21,8 +21,9 @@ function LinkItem({ link, index, showCount, history }) {
           const prevVotes = doc.data().votes;
           const newVotes = { votedBy: { id: user.uid, name: user.displayName } };
           const updatedVotes = [...prevVotes, newVotes];
+          const voteCount = updatedVotes.length;
           // update expects an object to be passed
-          voteRef.update({ votes: updatedVotes });
+          voteRef.update({ votes: updatedVotes, voteCount });
         }
       });
     }
@@ -55,13 +56,16 @@ function LinkItem({ link, index, showCount, history }) {
       <div className="ml1">
         <div>
           {' '}
-          {link.description} <span className="link">{getDomain(link.url)}</span>
+          <a className="black no-underline" href={link.url}>
+            {link.description}
+          </a>{' '}
+          <span className="link">{getDomain(link.url)}</span>
         </div>
         <div className="f6 lh-copy gray">
-          {link.votes.length} votes by {link.portedBy.name} {formatDistanceToNow(link.created)} |
+          {link.voteCount} votes by {link.portedBy.name} {formatDistanceToNow(link.created)} |
           {
             <Link to={`/link/${link.id}`}>
-              {link.comments.length > 0 ? `${link.commments.length} comments` : 'discuss'}
+              {link.comments.length > 0 ? `${link.comments.length} comments` : 'discuss'}
             </Link>
           }{' '}
           {postedByUser && (
