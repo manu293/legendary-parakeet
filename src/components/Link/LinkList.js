@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 // imports
 import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 
 // local imports
 import { FirebaseContext } from '../../firebase';
@@ -48,7 +49,30 @@ function LinkList(props) {
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapShot);
     }
-    return null;
+    // const offset = page * LINKS_PER_PAGE - LINKS_PER_PAGE;
+    // axios
+    //   .get(
+    //     `https://console.firebase.google.com/project/legendary-parakeet/overview?offset=${offset}`
+    //   )
+    // .then(resp => {
+    //   const linksResp = resp.data;
+    //   const lastLinkResp = linksResp[linksResp.length - 1];
+    //   setLinks(linksResp);
+    //   setCursor(lastLinkResp);
+    // });
+    // return () => {};
+    const offset = page * LINKS_PER_PAGE - LINKS_PER_PAGE;
+    axios
+      .get(
+        `https://us-central1-legendary-parakeet.cloudfunctions.net/linksPagination?offset=${offset}`
+      )
+      .then(resp => {
+        const linksResp = resp.data;
+        const lastLinkResp = linksResp[linksResp.length - 1];
+        setLinks(linksResp);
+        setCursor(lastLinkResp);
+      });
+    return () => {};
   }
 
   function handleSnapShot(snapShot) {
